@@ -1,0 +1,150 @@
+/* ==========================================================================
+   ENVIRONMENT CANVAS RESET & MASTER BASE LAYOUTS
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    color: #ffffff;
+    overflow-x: hidden;
+    position: relative;
+    transition: background 1.5s ease-in-out;
+}
+
+/* Fullscreen Background FX Canvases */
+#weather-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#lightning-flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Lightning strike keyframes triggerable via JS loop */
+.strike-active {
+    animation: lightningStrike 0.4s ease-out;
+}
+
+@keyframes lightningStrike {
+    0% { opacity: 0; }
+    10% { opacity: 0.75; }
+    15% { opacity: 0.2; }
+    20% { opacity: 0.9; }
+    60% { opacity: 0; }
+}
+
+/* ==========================================================================
+   ENVIRONMENTAL WEATHER CONDITIONS OUTER ATMOSPHERE BACKGROUNDS
+   ========================================================================== */
+body[data-condition="clear"] { background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa); }
+body[data-condition="fog"] { background: linear-gradient(135deg, #374151, #4b5563, #6b7280); }
+body[data-condition="drizzle"] { background: linear-gradient(135deg, #1f2937, #2d3748, #4a5568); }
+body[data-condition="rain"] { background: linear-gradient(135deg, #111827, #1f2937, #374151); }
+body[data-condition="snow"] { background: linear-gradient(135deg, #0f172a, #1e293b, #334155); }
+body[data-condition="thunderstorm"] { background: linear-gradient(135deg, #030712, #0f172a, #1e1b4b); }
+
+/* ==========================================================================
+   BRILLIANT VIBRANT HIGH-CONTRAST CARD THEME CONTAINERS
+   ========================================================================== */
+.weather-card {
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    width: 100%;
+    max-width: 750px;
+    padding: 2.5rem;
+    border-radius: 28px;
+    transition: all 0.5s ease;
+}
+
+/* 1. Hot Crimson Flame Box Glass */
+body.temp-hot .weather-card {
+    background: rgba(239, 68, 68, 0.16) !important;
+    border: 2px solid #ff4d4d !important;
+    box-shadow: 0 0 40px rgba(255, 77, 77, 0.4), inset 0 0 20px rgba(255, 77, 77, 0.2);
+}
+body.temp-hot .metric-box { background: rgba(239, 68, 68, 0.12); border-color: rgba(255,77,77,0.3); }
+
+/* 2. Warm Sunlit Sunset Amber Box Glass */
+body.temp-warm .weather-card {
+    background: rgba(245, 158, 11, 0.16) !important;
+    border: 2px solid #fbbf24 !important;
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.35), inset 0 0 20px rgba(251, 191, 36, 0.15);
+}
+body.temp-warm .metric-box { background: rgba(245, 158, 11, 0.1); border-color: rgba(251,191,36,0.25); }
+
+/* 3. Cool Electric Ocean Cyan Box Glass */
+body.temp-cool .weather-card {
+    background: rgba(6, 182, 212, 0.16) !important;
+    border: 2px solid #22d3ee !important;
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.2);
+}
+body.temp-cool .metric-box { background: rgba(6, 182, 212, 0.1); border-color: rgba(34, 211, 238, 0.3); }
+
+/* 4. Ice Neon Frost Violet Deep Freeze Box Glass */
+body.temp-cold .weather-card {
+    background: rgba(129, 140, 248, 0.2) !important;
+    border: 2px solid #99f6e4 !important;
+    box-shadow: 0 0 40px rgba(153, 246, 228, 0.4), inset 0 0 20px rgba(153, 246, 228, 0.2);
+}
+body.temp-cold .metric-box { background: rgba(129, 140, 248, 0.12); border-color: rgba(153, 246, 228, 0.25); }
+
+/* ==========================================================================
+   INTERACTIVE APP LAYOUT SUB-COMPONENTS
+   ========================================================================== */
+.search-form { display: flex; gap: 0.75rem; margin-bottom: 2rem; }
+.search-input {
+    flex: 1; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.85rem 1.25rem; border-radius: 14px; color: white; font-size: 1rem; outline: none;
+}
+.search-btn {
+    background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.85rem 1.5rem; border-radius: 14px; font-weight: 600; cursor: pointer;
+}
+.header-section { text-align: center; margin-bottom: 2.5rem; }
+.app-title { font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); }
+.location-name { font-size: 2.5rem; font-weight: 800; }
+.coordinates { font-size: 0.95rem; color: rgba(255,255,255,0.6); }
+.live-clock { font-size: 1.1rem; font-family: monospace; background: rgba(255,255,255,0.15); padding: 0.35rem 0.95rem; border-radius: 20px; display: inline-block; margin-top: 0.5rem; }
+.toggle-container { display: flex; justify-content: center; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+.toggle-btn { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); width: 48px; height: 26px; border-radius: 14px; cursor: pointer; position: relative; padding: 2px; }
+.toggle-dot { background: white; width: 20px; height: 20px; border-radius: 50px; transition: transform 0.2s ease; }
+.condition-hero { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem; }
+.metric-box { padding: 1.5rem; text-align: center; border-radius: 18px; }
+.metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+.metric-value { font-size: 2.75rem; font-weight: 800; }
+.metric-subvalue { font-size: 1.6rem; font-weight: 700; }
+.forecast-containers { display: flex; flex-direction: column; gap: 2.5rem; }
+.section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 2px solid rgba(255, 255, 255, 0.2); padding-bottom: 0.5rem; }
+.horizontal-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+.scroll-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; min-width: 90px; padding: 1rem 0.5rem; text-align: center; display: flex; flex-direction: column; gap: 0.5rem; }
+.vertical-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.list-row { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.07); padding: 0.95rem 1.25rem; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+.row-day { font-weight: 600; width: 110px; }
+.row-temps { width: 95px; text-align: right; display: flex; justify-content: flex-end; gap: 0.85rem; }
+.grid-optimized { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+.footer-notice { text-align: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); margin-top: 2.5rem; }
