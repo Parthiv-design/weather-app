@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskSnap Weather Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.0.5">
+</head>
+<!-- FIX: Uses a safe fallback class 'temp-cool' and condition 'clear' if weather data is initializing -->
+<body class="{{ weather.temp_class if weather and weather.temp_class else 'temp-cool' }}" 
+      data-condition="{{ weather.condition_type if weather and weather.condition_type else 'clear' }}">
+
+    <!-- Interactive Environmental FX Overlay Elements -->
+    <canvas id="weather-canvas"></canvas>
+    <div id="lightning-flash"></div>
+
+    <!-- FIX: Container wrapped securely to guarantee styles compile even on first load -->
+    <div class="weather-card">
+        
+        <!-- Flashed Alert Notification Messages Banner -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="error-alert">
+                  <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <!-- Search Controls -->
+        <form action="/" method="GET" class="search-form">
+            <input 
+                type="text" 
+                name="city" 
+                placeholder="Enter city name..." 
+                class="search-input"
+                required
+            >
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+
+        <!-- Header Controls Section -->
+        <div class="header-section">
+            <h1 class="app-title">Chill Out Weather</h1>
+            <p class="location-name">Live Report for {{ weather.city if weather else 'Calgary, Canada' }}</p>
+            <p class="coordinates">
+                {% if weather %}
+                    {{ weather.lat }}°N, {{ weather.long }}°W
+                {% else %}
+                    51.05°N, 114.07°W
+                {% endif %}
+            </p>
+            
+            <div class="toggle-container">
+                <span class="unit-label">°C</span>
+                <button id="unit-toggle-btn" class="toggle-btn" aria-label="Toggle temperature unit">
+                    <div id="toggle-dot" class="toggle-dot"></div>
+                </button>
+                <span class="unit-label">°F</span>
+            </div>
+
+            <p id="live-clock" class="live-clock"></p>
+        </div>
+
+        {% if weather and not weather.error %}
+        <div class="weather-details">
+            
+            <div class="condition-hero">
+                <span class="metric-label">Current Condition</span>
+                <span class="condition-text">{{ weather.condition }}</span>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <span class="metric-label">Temperature</span>
+                    <span class="metric-value temp-display" 
+                          data-celsius="{{ weather.temp }}" 
+                          data-fahrenheit="{{ weather.temp_f }}">
+                        {{ weather.temp }}
+                    </span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Feels Like</span>
+                    <span class="metric-value feels-display" 
+                          data-celsius="{{ weather.feels_like }}" 
+                          data-fahrenheit="{{ weather.feels_like_f }}">
+                        {{ weather.feels_like }}
+                    </span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Humidity</span>
+                    <span class="metric-subvalue">{{ weather.humidity }}</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">Wind Speed</span>
+                    <span class="metric-subvalue">{{ weather.wind }}</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EXTENDED FORECAST ARRAYS -->
+        <div class="forecast-containers">
+            <div class="forecast-section">
+                <h2 class="section-title">Hourly Forecast</h2>
+                <div class="horizontal-scroll">
+                    {% for hour in weather.hourly %}
+                    <div class="scroll-item">
+                        <span class="scroll-time">{{ hour.time }}</span>
+                        <span class="scroll-icon">{{ hour.condition }}</span>
+                        <span class="scroll-temp" 
+                              data-celsius="{{ hour.temp }}°C" 
+                              data-fahrenheit="{{ hour.temp_f }}°F">
+                            {{ hour.temp }}°C
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="forecast-section">
+                <h2 class="section-title">7-Day Forecast</h2>
+                <div class="vertical-list">
+                    {% for day in weather.seven_day %}
+                    <div class="list-row">
+                        <span class="row-day">{{ day.day }}</span>
+                        <span class="row-icon">{{ day.condition }}</span>
+                        <span class="row-temps">
+                            <strong data-celsius="{{ day.max }}°" data-fahrenheit="{{ day.max_f }}°">{{ day.max }}°</strong> 
+                            <span data-celsius="{{ day.min }}°" data-fahrenheit="{{ day.min_f }}°">{{ day.min }}°</span>
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="forecast-section">
+                <h2 class="section-title">14-Day Long Range Forecast</h2>
+                <div class="vertical-list grid-optimized">
+                    {% for day in weather.fourteen_day %}
+                    <div class="list-row">
+                        <span class="row-day">{{ day.day }}</span>
+                        <span class="row-icon">{{ day.condition }}</span>
+                        <span class="row-temps">
+                            <strong data-celsius="{{ day.max }}°" data-fahrenheit="{{ day.max_f }}°">{{ day.max }}°</strong> 
+                            <span data-celsius="{{ day.min }}°" data-fahrenheit="{{ day.min_f }}°">{{ day.min }}°</span>
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% elif weather and weather.error %}
+        <div class="error-alert">
+            <p>{{ weather.error }}</p>
+        </div>
+        {% endif %}
+
+        <div class="footer-notice">
+            Powered by Open-Meteo API
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=1.0.5"></script>
+</body>
+</html>
